@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finia — Your Personal Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- CURRENCY SETUP SCREEN -->
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-card">
+            <div class="setup-logo">
+                <img src="pfp/finia.jpg" alt="Finia Logo" height="120" width="120">
+            </div>
+            <h1 class="setup-title">Welcome to <em>Finia</em></h1>
+            <p class="setup-sub">Your calm space for personal finance.</p>
+            <div class="setup-field">
+                <label>What currency do you use?</label>
+                <div class="currency-options">
+                    <button class="currency-btn active" data-symbol="৳">৳ Taka</button>
+                    <button class="currency-btn" data-symbol="$">$ Dollar</button>
+                    <button class="currency-btn" data-symbol="€">€ Euro</button>
+                    <button class="currency-btn" data-symbol="£">£ Pound</button>
+                    <button class="currency-btn" data-symbol="¥">¥ Yen</button>
+                </div>
+                <div class="custom-currency">
+                    <input type="text" id="customCurrency" placeholder="Or type your own symbol..." maxlength="3">
+                </div>
+            </div>
+            <button class="setup-btn" id="setupBtn">Get Started →</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="app" id="app" style="display:none">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo"> 
+                    <img src="pfp/finia.jpg" alt="Finia Logo" height="40" width="40">
+                </span>
+                <span class="currency-tag" id="currencyTag"></span>
+            </div>
+            <div class="header-right">
+                <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+            </div>
+        </header>
+
+        <!-- BALANCE CARD -->
+        <section class="balance-section">
+            <div class="balance-card">
+                <div class="balance-label">Total Balance</div>
+                <div class="balance-amount" id="balanceAmount">৳0.00</div>
+                <div class="balance-row">
+                    <div class="balance-mini income-mini">
+                        <span class="mini-icon">↑</span>
+                        <div>
+                            <div class="mini-label">Income</div>
+                            <div class="mini-amount" id="totalIncome">৳0.00</div>
+                        </div>
+                    </div>
+                    <div class="balance-divider"></div>
+                    <div class="balance-mini expense-mini">
+                        <span class="mini-icon">↓</span>
+                        <div>
+                            <div class="mini-label">Expenses</div>
+                            <div class="mini-amount" id="totalExpenses">৳0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADD TRANSACTION -->
+        <section class="add-section">
+            <h2 class="section-title">Add Transaction</h2>
+            <div class="type-toggle">
+                <button class="type-btn active" id="incomeBtn" data-type="income">↑ Income</button>
+                <button class="type-btn" id="expenseBtn" data-type="expense">↓ Expense</button>
+            </div>
+            <div class="form-grid">
+                <input type="text" class="finia-input" id="descInput" placeholder="Description (e.g. Lunch)">
+                <input type="number" class="finia-input" id="amountInput" placeholder="Amount" min="0.01" step="0.01">
+                <select class="finia-input" id="categorySelect"></select>
+                <button class="add-btn" id="addBtn">Add</button>
+            </div>
+            <div class="form-msg" id="formMsg"></div>
+        </section>
+
+        <!-- BUDGET ALERTS -->
+        <div class="budget-alerts" id="budgetAlerts"></div>
+
+        <!-- TRANSACTIONS -->
+        <section class="transactions-section">
+            <div class="section-header">
+                <h2 class="section-title">Transactions</h2>
+                <button class="text-btn" id="exportBtn">Export CSV</button>
+            </div>
+            <div class="filter-row">
+                <select class="filter-select" id="filterType">
+                    <option value="all">All</option>
+                    <option value="income">Income</option>
+                    <option value="expense">Expense</option>
+                </select>
+                <select class="filter-select" id="filterCategory">
+                    <option value="all">All Categories</option>
+                </select>
+            </div>
+            <ul class="transaction-list" id="transactionList">
+                <li class="empty-state">No transactions yet. Add one above!</li>
+            </ul>
+        </section>
+
+        <!-- BUDGET MANAGER -->
+        <section class="budget-section">
+            <h2 class="section-title">Category Budgets</h2>
+            <p class="section-sub">Set monthly spending limits per category.</p>
+            <div class="budget-list" id="budgetList"></div>
+            <div class="budget-form">
+                <select class="finia-input" id="budgetCategorySelect"></select>
+                <input type="number" class="finia-input" id="budgetAmount" placeholder="Monthly limit" min="1">
+                <button class="add-btn small" id="setBudgetBtn">Set</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="close-btn" id="closeSettings">✕</button>
+            </div>
+
+            <div class="modal-section">
+                <h4>Categories</h4>
+                <ul class="category-list" id="categoryList"></ul>
+                <div class="category-add-form">
+                    <input type="text" class="finia-input" id="newCategoryInput" placeholder="New category name">
+                    <button class="add-btn small" id="addCategoryBtn">Add</button>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h4>Currency</h4>
+                <div class="currency-options small">
+                    <button class="currency-btn" data-symbol="৳">৳</button>
+                    <button class="currency-btn" data-symbol="$">$</button>
+                    <button class="currency-btn" data-symbol="€">€</button>
+                    <button class="currency-btn" data-symbol="£">£</button>
+                    <button class="currency-btn" data-symbol="¥">¥</button>
+                </div>
+                <input type="text" class="finia-input" id="settingsCurrency" placeholder="Custom symbol" maxlength="3" style="margin-top:8px">
+                <button class="add-btn small" id="saveCurrencyBtn" style="margin-top:8px">Save Currency</button>
+            </div>
+
+            <div class="modal-section danger-zone">
+                <h4>Danger Zone</h4>
+                <button class="danger-btn" id="resetBtn">Reset All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
